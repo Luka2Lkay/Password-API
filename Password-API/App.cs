@@ -21,22 +21,23 @@ namespace Password_API
           _authService = new AuthService(configuration);
         }
 
-        public void SubmitCv ()
+        public async Task SubmitCv ()
         {
             _logger.Info("Generating dictionary...");
             List<string> passwords = _dictionaryService.GeneratePassword("passwords");
             File.WriteAllLines("dict.txt", passwords);
 
             _logger.Info("Authentication...");
-            _authService.Athenticate();
+            string? uploadUrl = await _authService.Athenticate("John", passwords);
 
+            Console.WriteLine($"Url status: {uploadUrl}");   
 
-        
+            if (uploadUrl == null) {
+                _logger.Error("Authentication failed!");
+                return;
+            }
 
-
-            //passwords.ForEach(p => Console.WriteLine($"Generated Password: {p}"));
-
-            
+            _logger.Success("Authentication successful!");
         }
 
 

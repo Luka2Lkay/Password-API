@@ -30,7 +30,7 @@ namespace Password_API.services
            
         }
 
-        public async Task<string> Athenticate(string username, List<string> passwords)
+        public async Task<string?> Athenticate(string username, List<string> passwords)
         {
             foreach (string password in passwords)
             {
@@ -41,9 +41,17 @@ namespace Password_API.services
             return null;
         }
 
-        private async Task<string> TryPassword(string username, string password)
+        private async Task<string?> TryPassword(string username, string password)
         {
-           string auth = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
+            string? urlKey = Environment.GetEnvironmentVariable(_authUrl);
+
+            if (string.IsNullOrEmpty(urlKey)) {
+
+                _logger.Warn("The urlKey value is empty.");
+                return null;
+            }
+
+            string auth = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, _authUrl);
             request.Headers.Authorization = new AuthenticationHeaderValue("Basic", auth);
 
@@ -66,8 +74,6 @@ namespace Password_API.services
                 }
             }
             return null;
-
         }
-
     }
 }
