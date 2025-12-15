@@ -6,8 +6,6 @@ public class Program
         var app = new App();
 
         app.SubmitCv();
-        //var print = app.SubmitCv();
-
-        //return print;
+  
     }
 }
