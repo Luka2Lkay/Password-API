@@ -1,2 +1,13 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World! Let us code");
+﻿using Password_API;
+public class Program
+{
+    public static void Main(string[] arg)
+    {
+        var app = new App();
+
+        app.SubmitCv();
+        //var print = app.SubmitCv();
+
+        //return print;
+    }
+}
