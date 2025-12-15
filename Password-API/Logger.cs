@@ -12,12 +12,18 @@ namespace Password_API
         {
             Write(message, ConsoleColor.Cyan);
         }
+
+        public void Warn(string message)
+        {
+            Write(message, ConsoleColor.Yellow);
+        }
+
         public void Error(string message)
         {
             Write(message, ConsoleColor.Red);
         }
 
-       public void Success(string message)
+       public  void Success(string message)
         {
             Write(message, ConsoleColor.Green);
         }

@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Password_API.services;
+using Microsoft.Extensions.Configuration;
 
 namespace Password_API
 {
@@ -13,6 +14,13 @@ namespace Password_API
     {
         private readonly Logger _logger = new Logger();
         private readonly DictionaryService _dictionaryService = new DictionaryService();
+        private readonly AuthService _authService;
+
+        public App (IConfiguration configuration)
+        {
+          _authService = new AuthService(configuration);
+        }
+
         public void SubmitCv ()
         {
             _logger.Info("Generating dictionary...");
@@ -20,13 +28,13 @@ namespace Password_API
             File.WriteAllLines("dict.txt", passwords);
 
             _logger.Info("Authentication...");
-
+            _authService.Athenticate();
 
 
         
 
 
-            passwords.ForEach(p => Console.WriteLine($"Generated Password: {p}"));
+            //passwords.ForEach(p => Console.WriteLine($"Generated Password: {p}"));
 
             
         }
