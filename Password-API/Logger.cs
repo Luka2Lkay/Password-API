@@ -29,10 +29,8 @@ namespace Password_API
         }
         private static void Write(string message, ConsoleColor color)
         {
-            ConsoleColor previousColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
             Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] {message}");
-            Console.ForegroundColor = previousColor;
             Console.ResetColor();
         }
     }

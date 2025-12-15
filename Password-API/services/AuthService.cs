@@ -15,19 +15,19 @@ namespace Password_API.services
     {
         private static readonly HttpClient _http = new HttpClient();
         private readonly SemaphoreSlim _throttle;
-        private readonly string _authUrl;
-        private readonly int _maximumRetries;
+        private readonly string? _authUrl;
+        private readonly int? _maximumRetries;
         private readonly int _delays;
         private readonly Logger _logger = new Logger();
         
 
-        public AuthService(IConfiguration configuration)
+        public  AuthService(IConfiguration configuration)
         {
             _authUrl = configuration["Api:AuthUrl"];
             _maximumRetries = int.Parse(configuration["Api:MaximumRetries"]);
             _throttle = new SemaphoreSlim(int.Parse(configuration["Api:MaximumConcurrentRequest"]));
             _delays = int.Parse(configuration["Api:ThrottleDelaysMS"]);
-           
+        
         }
 
         public async Task<string?> Athenticate(string username, List<string> passwords)
@@ -36,18 +36,24 @@ namespace Password_API.services
             {
                 await _throttle.WaitAsync();
                 await TryPassword(username, password).ContinueWith(throttle => _throttle.Release());
+                await Task.Delay(_delays);
             }
 
             return null;
         }
 
         private async Task<string?> TryPassword(string username, string password)
+
+
         {
+
+            if(_authUrl == null) return null;
+
             string? urlKey = Environment.GetEnvironmentVariable(_authUrl);
 
             if (string.IsNullOrEmpty(urlKey)) {
 
-                _logger.Warn("The urlKey value is empty.");
+                _logger.Warn("The urlKey value is missing.");
                 return null;
             }
 
