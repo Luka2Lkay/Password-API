@@ -19,8 +19,11 @@ namespace Password_API
             List<string> passwords = _dictionaryService.GeneratePassword("passwords");
             File.WriteAllLines("dict.txt", passwords);
 
+            _logger.Info("Authentication...");
 
-      
+
+
+        
 
 
             passwords.ForEach(p => Console.WriteLine($"Generated Password: {p}"));
