@@ -7,16 +7,18 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
+using System.Runtime.InteropServices;
 
 namespace Password_API.services
 {
     public class AuthService
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private static readonly HttpClient _http = new HttpClient();
         private readonly SemaphoreSlim _throttle;
         private readonly string _authUrl;
         private readonly int _maximumRetries;
         private readonly int _delays;
+        private readonly Logger _logger = new Logger();
         
 
         public AuthService(IConfiguration configuration)
@@ -43,6 +45,27 @@ namespace Password_API.services
         {
            string auth = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, _authUrl);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Basic", auth);
+
+            for (int i = 1; i <= _maximumRetries; i++)
+            {
+                try
+                {
+                    HttpResponseMessage response = await _http.SendAsync(request);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        _logger.Success($"Password found: {password}");
+                        return await response.Content.ReadAsStringAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warn($"Retry {i}: {ex.Message}");
+                    await Task.Delay(500 * i);
+                }
+            }
+            return null;
 
         }
 
