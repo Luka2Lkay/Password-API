@@ -26,15 +26,17 @@ namespace Password_API.services
             return  results;
         }
 
-        private static void GenerateCombinations(string current, string remaining, Dictionary<char, char[]> substitutions, List<string> results)
+        private static void GenerateCombinations(string current, string remainingChars, Dictionary<char, char[]> substitutions, List<string> results)
         {
-            if (string.IsNullOrEmpty(remaining))
+     
+            if (string.IsNullOrEmpty(remainingChars))
             {
                 results.Add(current);
                 return;
             }
-            char firstChar = remaining[0];
-            string rest = remaining.Substring(1);
+
+            char firstChar = remainingChars[0];
+            string rest = remainingChars.Substring(1);
 
             if (substitutions.ContainsKey(firstChar))
             {
