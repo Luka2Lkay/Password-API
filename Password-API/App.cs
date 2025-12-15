@@ -16,14 +16,11 @@ namespace Password_API
         public void SubmitCv ()
         {
             _logger.Info("Generating dictionary...");
-
             List<string> passwords = _dictionaryService.GeneratePassword("passwords");
+            File.WriteAllLines("dict.txt", passwords);
 
 
-            foreach (var password in passwords)
-            {
-
-            }
+      
 
 
             passwords.ForEach(p => Console.WriteLine($"Generated Password: {p}"));
