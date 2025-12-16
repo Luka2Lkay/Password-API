@@ -12,11 +12,13 @@ namespace Password_API
         private readonly ZipService _zipService = new ZipService();
         private readonly string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private readonly string _submissionDirectory;
+        private readonly UploadService _uploadService;
 
         public App(IConfiguration configuration)
         {
             _authService = new AuthService(configuration);
             _submissionDirectory = Path.Combine(baseDirectory, "submission");
+            _uploadService = new UploadService(configuration);
         }
 
         public async Task SubmitCv()
@@ -26,26 +28,28 @@ namespace Password_API
             Directory.CreateDirectory(_submissionDirectory);
             string directoryPath = Path.Combine(_submissionDirectory, "dict.txt");
             File.WriteAllLines(directoryPath, passwords);
-            _logger.Success("Dictionary generated!");   
+            _logger.Success("Dictionary generated!");
 
-            //_logger.Info("Authentication...");
-            //string? uploadUrl = await _authService.Athenticate("John", passwords);
+            _logger.Info("Authentication...");
+            string? uploadUrl = await _authService.Athenticate("John", passwords);
 
-            //if (uploadUrl == null)
-            //{
-            //    _logger.Error("Authentication failed!");
-            //    return;
-            //}
+            if (uploadUrl == null)
+            {
+                _logger.Error("Authentication failed!");
+                return;
+            }
 
-            //_logger.Success("Authentication successful!");
+            _logger.Success("Authentication successful!");
 
             CopyRequiredFiles(_submissionDirectory);
-          
+
             _logger.Info("Creating zip file...");
             string zipPath = _zipService.CreateZip(_submissionDirectory);
             _logger.Success("Zip file created!");
 
             _logger.Info("Submitting CV...");
+            await _uploadService.UploadSubmission(zipPath, uploadUrl);
+            _logger.Success("CV submitted successfully!");
         }
 
         private void CopyRequiredFiles(string directoryPath)
