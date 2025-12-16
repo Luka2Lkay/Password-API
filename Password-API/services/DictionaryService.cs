@@ -1,11 +1,4 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Password_API.services
+﻿namespace Password_API.services
 {
     public class DictionaryService
     {
@@ -21,35 +14,38 @@ namespace Password_API.services
             };
 
             List<string> results = new List<string>();
-            GenerateCombinations(string.Empty, word, substitutions, results);
+           
+            GenerateCombinations(word.ToCharArray(), 0, new char [word.Length], substitutions, results);
 
             return  results;
         }
 
-        private static void GenerateCombinations(string current, string remainingChars, Dictionary<char, char[]> substitutions, List<string> results)
+        private static void GenerateCombinations(char[] input, int index, char[] current, Dictionary<char, char[]> substitutions, List<string> results)
         {
-     
-            if (string.IsNullOrEmpty(remainingChars))
+            if (index == input.Length)
             {
-                results.Add(current);
+                results.Add(new string(current));
                 return;
             }
 
-            char firstChar = remainingChars[0];
-            string rest = remainingChars.Substring(1);
+            char character = char.ToLower(input[index]);
 
-            if (substitutions.ContainsKey(firstChar))
+            if (substitutions.ContainsKey(character))
             {
-                foreach (char substitute in substitutions[firstChar])
+                foreach (char substitute in substitutions[character])
                 {
-                    GenerateCombinations(current + substitute, rest, substitutions, results);
+                    current[index] = substitute;
+                    GenerateCombinations(input, index + 1, current, substitutions, results);
                 }
             }
             else
             {
-                GenerateCombinations(current + firstChar, rest, substitutions, results);
+                current[index] = char.ToLower(character);
+                GenerateCombinations(input, index + 1, current, substitutions, results);
+
+                current[index] = char.ToUpper(character);
+                GenerateCombinations(input, index + 1, current, substitutions, results);
             }
         }
-
     }
 }

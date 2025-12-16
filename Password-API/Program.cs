@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 public class Program
 {
-    public static void Main(string[] arg)
+    public static async Task Main(string[] arg)
     {
 
         IConfiguration configuration = new ConfigurationBuilder()
@@ -11,9 +11,9 @@ public class Program
             .AddEnvironmentVariables()
             .Build();
 
-        var app = new App(configuration);
+        App app = new App(configuration);
 
-        app.SubmitCv();
+        await app.SubmitCv();
 
     }
 }

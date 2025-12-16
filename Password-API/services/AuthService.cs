@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Text;
-using System.Threading.Tasks;
-using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text.Json;
 using Microsoft.Extensions.Configuration;
-using System.Runtime.InteropServices;
 
 namespace Password_API.services
 {
@@ -20,7 +14,6 @@ namespace Password_API.services
         private readonly int _delays;
         private readonly Logger _logger = new Logger();
         
-
         public  AuthService(IConfiguration configuration)
         {
             _authUrl = configuration["Api:AuthUrl"];
@@ -35,7 +28,22 @@ namespace Password_API.services
             foreach (string password in passwords)
             {
                 await _throttle.WaitAsync();
-                await TryPassword(username, password).ContinueWith(throttle => _throttle.Release());
+                try
+                {
+                   string? result =  await TryPassword(username, password);
+
+                    if(result != null) 
+                    {
+                        return result;
+                    }
+
+
+                }
+                finally { 
+                _throttle.Release();
+                }
+
+
                 await Task.Delay(_delays);
             }
 
@@ -43,8 +51,6 @@ namespace Password_API.services
         }
 
         private async Task<string?> TryPassword(string username, string password)
-
-
         {
 
             if(_authUrl == null) return null;
@@ -58,14 +64,18 @@ namespace Password_API.services
             }
 
             string auth = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, _authUrl);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, urlKey);
             request.Headers.Authorization = new AuthenticationHeaderValue("Basic", auth);
 
+            Console.WriteLine($"Basic: {username}:{password}");
+           
             for (int i = 1; i <= _maximumRetries; i++)
-            {
+            { 
                 try
                 {
                     HttpResponseMessage response = await _http.SendAsync(request);
+
+                    Console.WriteLine($"Tried password: {password} - Status Code: {response.StatusCode}");
 
                     if (response.IsSuccessStatusCode)
                     {

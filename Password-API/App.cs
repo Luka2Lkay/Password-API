@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Configuration;
 using Password_API.services;
-using Microsoft.Extensions.Configuration;
 
 namespace Password_API
 {
@@ -24,13 +18,11 @@ namespace Password_API
         public async Task SubmitCv ()
         {
             _logger.Info("Generating dictionary...");
-            List<string> passwords = _dictionaryService.GeneratePassword("passwords");
+            List<string> passwords = _dictionaryService.GeneratePassword("password");
             File.WriteAllLines("dict.txt", passwords);
 
             _logger.Info("Authentication...");
             string? uploadUrl = await _authService.Athenticate("John", passwords);
-
-            Console.WriteLine($"Url status: {uploadUrl}");   
 
             if (uploadUrl == null) {
                 _logger.Error("Authentication failed!");
@@ -39,7 +31,5 @@ namespace Password_API
 
             _logger.Success("Authentication successful!");
         }
-
-
     }
 }
