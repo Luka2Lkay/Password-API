@@ -26,11 +26,13 @@ namespace Password_API
             Directory.CreateDirectory(_submissionDirectory);
             string directoryPath = Path.Combine(_submissionDirectory, "dict.txt");
             File.WriteAllLines(directoryPath, passwords);
+            _logger.Success("Dictionary generated!");   
 
             //_logger.Info("Authentication...");
             //string? uploadUrl = await _authService.Athenticate("John", passwords);
 
-            //if (uploadUrl == null) {
+            //if (uploadUrl == null)
+            //{
             //    _logger.Error("Authentication failed!");
             //    return;
             //}
@@ -38,12 +40,12 @@ namespace Password_API
             //_logger.Success("Authentication successful!");
 
             CopyRequiredFiles(_submissionDirectory);
-           
-
+          
             _logger.Info("Creating zip file...");
             string zipPath = _zipService.CreateZip(_submissionDirectory);
+            _logger.Success("Zip file created!");
 
-            Console.WriteLine($"Path: {zipPath}");
+            _logger.Info("Submitting CV...");
         }
 
         private void CopyRequiredFiles(string directoryPath)
@@ -52,16 +54,14 @@ namespace Password_API
             string cvDestinationPath = Path.Combine(directoryPath, "Lukhanyo_Matshebelele_Full_Stack_Developer_CV.pdf");
 
             File.Copy(cvSourcePath, cvDestinationPath, true);
+            File.Copy("appsettings.json", Path.Combine(directoryPath, "appsettings.json"), true);
 
-            //File.Copy("Program.cs", Path.Combine(directoryPath, "Program.cs"), true);
-
-            var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.cs");
+            string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.cs");
 
             foreach (string file in files)
             {
 
-                var destinationPath = Path.Combine(directoryPath, Path.GetFileName(file));
-
+                string destinationPath = Path.Combine(directoryPath, Path.GetFileName(file));
                 File.Copy(file, destinationPath, true);
 
             }
