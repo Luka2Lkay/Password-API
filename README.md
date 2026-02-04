@@ -1,5 +1,10 @@
-# Requirements
+# Password-API
+A C# console application that authenticates against a REST API, programmatically generates password variations to simulate a dictionary attack for testing, retrieves a temporary upload URL, zips files, and submits a CV package automatically via HTTP requests. It is built as a practical exercise in API integration, authentication flows, and automation.
 
-You have to write an application to submit your CV and the code you are about to write to a REST API as a Zip file. Before you can do this, you first need to authenticate yourself against another REST API to get the temporary URL where you need to submit your CV. Problem is you forgot the password, or at least you forgot how to spell the password.
+## Requirements
 
-You know the password is "password", or was it "Password", or even "P@55w0rd"… you just can't remember. Sometimes you replace the ‘a’ with a ‘@’, your ‘s’ with a ‘5’ and your ‘o’ with a ‘0’, but not always. "Not a problem…", you think to yourself, because you will also write a bit of code to generate a dictionary and launch an attack on the WEB API until you are able to guess the correct password. If your plan works, you will get the temporary URL of the REST API where you need to submit your CV, and you will be well on your way to getting your dream job.
+You need to build an application that uploads your CV along with the code you write to a REST API as a ZIP file. However, before submitting anything, you must first authenticate with a separate REST API to obtain a temporary upload URL.
+
+The challenge is that you’ve forgotten your password — or at least the exact spelling. You remember it being something like “password,” but it could also be “Password” or even “P@55w0rd.” You often substitute characters such as “a” with “@,” “s” with “5,” and “o” with “0,” though not consistently.
+
+To solve this, you decide to write a small script that generates possible password variations and performs a dictionary-style attack against the authentication API until the correct password is found. Once authenticated, you’ll receive the temporary submission URL and can proceed with uploading your CV.
